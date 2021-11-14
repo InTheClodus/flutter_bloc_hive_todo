@@ -38,4 +38,7 @@ class WebClient {
   Future<bool> postTodos(List<TodoModel> todos) async {
     return Future.value(true);
   }
+  Future<bool> deleteTodo(TodoModel todo) async {
+    return Future.value(true);
+  }
 }

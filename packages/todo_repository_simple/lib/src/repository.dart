@@ -46,11 +46,21 @@ class TodosRepositoryFlutter implements TodoRepository {
       webClient.postTodos(todos),
     ]);
   }
-
+  /// 保存一条待办信息,如果是存在的那么就进行修改，不存在就新增
   @override
   Future saveTodo(TodoModel todoModel) {
     return Future.wait<dynamic>([
       fileStorage.saveTodo(todoModel)
     ]);
   }
+
+  /// 删除待办事项
+  @override
+  Future<void> deleteTodo(TodoModel todoModel) {
+    return Future.wait<dynamic>([
+      fileStorage.deleteTodo(todoModel),
+      webClient.deleteTodo(todoModel)
+    ]);
+  }
+
 }

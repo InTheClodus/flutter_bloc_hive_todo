@@ -1,9 +1,14 @@
+import 'package:animated_text_kit/animated_text_kit.dart';
+import 'package:bot_toast/bot_toast.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_bloc_hive_todo/blocs/todos/todos.dart';
+import 'package:flutter_bloc_hive_todo/date_util.dart';
+import 'package:flutter_bloc_hive_todo/test_api.dart';
 import 'package:flutter_bloc_hive_todo/view/test.dart';
 import 'package:flutter_bloc_hive_todo/view/todo_editor_dialog.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:todos_repository/todo_repository_core.dart';
 
@@ -18,18 +23,6 @@ class _TodoHomeState extends State<TodoHome> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text("待办事项"),
-        actions: [
-          IconButton(
-              onPressed: () {
-                //路由跳转  固定写法  PageA 为目标页面类名
-                Navigator.of(context)
-                    .push(MaterialPageRoute(builder: (context) => TestPage()));
-              },
-              icon: const Icon(Icons.add))
-        ],
-      ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       floatingActionButton: FloatingActionButton(
         foregroundColor: Colors.white,
@@ -41,10 +34,58 @@ class _TodoHomeState extends State<TodoHome> {
       body: BlocBuilder<TodosBloc, TodosState>(
         builder: (context, state) {
           if (state is TodosLoadInProgress) {
-            return const Text("加载中");
+            BotToast.showLoading();
+            return Container();
           } else if (state is TodosLoadSuccess) {
+            Future.delayed(const Duration(seconds: 2), () {
+              BotToast.closeAllLoading();
+            });
             return CustomScrollView(
               slivers: [
+                SliverAppBar(
+                  expandedHeight: 120.0,
+                  pinned: true,
+                  floating: true,
+                  centerTitle: true,
+                  backgroundColor: Colors.teal,
+                  automaticallyImplyLeading: false,
+                  actions: [
+                    IconButton(
+                        onPressed: () async {
+                          //路由跳转  固定写法  PageA 为目标页面类名
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute<void>(
+                                builder: (BuildContext context) =>
+                                    const TestPage(),
+                              ));
+                          // final aa =await TestApi.getScienceArticle();
+                          // print("_-------->>>${aa.data!.map((e) => e.cover).toList()}");
+                        },
+                        icon: Icon(Icons.add))
+                  ],
+                  flexibleSpace: FlexibleSpaceBar(
+                      collapseMode: CollapseMode.pin,
+                      centerTitle: true,
+                      title: SizedBox(
+                        width: 250.0,
+                        child: TypewriterAnimatedTextKit(
+                          isRepeatingAnimation: false,
+                          speed: const Duration(milliseconds: 50),
+                          text: const ['待办'],
+                          textStyle:
+                              GoogleFonts.ubuntu(fontWeight: FontWeight.bold),
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                      background: Image.asset(
+                        'assets/images/background.jpg',
+                        fit: BoxFit.fill,
+                        height: 100,
+                        colorBlendMode: BlendMode.color,
+                        color: Colors.red,
+                      )),
+                ),
                 SliverList(
                     delegate: SliverChildListDelegate([
                   const SizedBox(height: 10),
@@ -54,26 +95,29 @@ class _TodoHomeState extends State<TodoHome> {
                         showTodoEditorDialog(context, todo: todo);
                       },
                       child: Slidable(
-                        startActionPane: ActionPane(
-                          motion: const ScrollMotion(),
-                          dismissible: DismissiblePane(onDismissed: () {}),
-                          children: [
-                            SlidableAction(
-                              onPressed: (BuildContext context) {},
-                              flex: 2,
-                              backgroundColor: const Color(0xFFFE4A49),
-                              foregroundColor: Colors.white,
-                              icon: Icons.delete,
-                              label: '删除',
-                            ),
-                          ],
-                        ),
+                        key: const ValueKey(0),
                         endActionPane: ActionPane(
                           motion: const ScrollMotion(),
                           children: [
                             SlidableAction(
                               flex: 2,
-                              onPressed: (BuildContext context) async {},
+                              onPressed: (BuildContext context) async {
+                                BlocProvider.of<TodosBloc>(context).add(
+                                  TodoDeleted(todo),
+                                );
+                              },
+                              backgroundColor: const Color(0xFFFE4A49),
+                              foregroundColor: Colors.white,
+                              icon: Icons.delete_forever_sharp,
+                              label: '删除',
+                            ),
+                            SlidableAction(
+                              flex: 2,
+                              onPressed: (BuildContext context) async {
+                                BlocProvider.of<TodosBloc>(context).add(
+                                  TodoUpdated(todo),
+                                );
+                              },
                               backgroundColor: const Color(0xFF7BC043),
                               foregroundColor: Colors.white,
                               icon: Icons.radio_button_unchecked,
@@ -122,22 +166,23 @@ class _TodoHomeState extends State<TodoHome> {
                                               fontWeight: todo.done!
                                                   ? FontWeight.w100
                                                   : FontWeight.normal,
-                                              decoration:
-                                                  TextDecoration.lineThrough),
+                                              decoration: todo.done!
+                                                  ? TextDecoration.lineThrough
+                                                  : TextDecoration.none),
                                         ),
                                       ),
                                       const SizedBox(height: 6),
                                       Opacity(
                                         opacity: 0.4,
                                         child: Row(
-                                          children: const [
-                                            Icon(
+                                          children:  [
+                                            const Icon(
                                               Icons.date_range,
                                               size: 12,
                                             ),
-                                            SizedBox(width: 4),
-                                            Text("'MM-dd-yyyy HH:mm'",
-                                                style: TextStyle(
+                                            const SizedBox(width: 4),
+                                            Text(DateUtil.formatDate(todo.time!,format: "yyyy/MM/dd"),
+                                                style: const TextStyle(
                                                   fontSize: 12,
                                                 ))
                                           ],

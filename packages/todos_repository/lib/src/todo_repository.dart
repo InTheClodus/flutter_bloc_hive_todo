@@ -10,4 +10,6 @@ abstract class TodoRepository {
   Future saveTodos(List<TodoModel> todos);
   /// 添加一个待办事项
   Future saveTodo(TodoModel todoModel);
+  /// 删除待办事项
+  Future<void> deleteTodo(TodoModel todoModel);
 }

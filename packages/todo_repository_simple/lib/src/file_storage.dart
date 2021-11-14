@@ -8,14 +8,9 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:todos_repository/todo_repository_core.dart';
 
 class FileStorage {
-  final String tag;
-  final Future<Directory> Function() getDirectory;
+  const FileStorage();
 
-  const FileStorage(
-    this.tag,
-    this.getDirectory,
-  );
-
+  /// 加载待办事项
   Future<List<TodoModel>> loadTodos() async {
     final todoBox = await Hive.openBox<TodoModel>("todos");
     List<TodoModel> todos = [];
@@ -23,6 +18,7 @@ class FileStorage {
     return todos;
   }
 
+  /// 保存全部待办事项
   Future saveTodos(List<TodoModel> todos) async {
     final settingsBox = await Hive.openBox<bool>('settings');
     final todosBox = await Hive.openBox<TodoModel>('todos');
@@ -30,6 +26,7 @@ class FileStorage {
     await settingsBox.put('initialized', true);
   }
 
+  /// 保存一条待办事项
   Future saveTodo(TodoModel todoModel) async {
     if (todoModel.isInBox) {
       final key = todoModel.key;
@@ -40,4 +37,7 @@ class FileStorage {
   }
 
 
+  Future deleteTodo(TodoModel todoModel) async {
+    Hive.box<TodoModel>("todos").delete(todoModel.key);
+  }
 }

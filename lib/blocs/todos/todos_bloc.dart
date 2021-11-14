@@ -17,6 +17,8 @@ class TodosBloc extends Bloc<TodosEvent, TodosState> {
     });
     on<TodosLoaded>(_onLoaded);
     on<TodoAdded>(_onAddTodo);
+    on<TodoDeleted>(_onDelTodo);
+    on<TodoUpdated>(_onUpdateTodo);
   }
 
   /// 加载待办事项
@@ -47,13 +49,37 @@ class TodosBloc extends Bloc<TodosEvent, TodosState> {
   }
 
   /// 删除待办事项
-  void _onDelTodo(TodosEvent event, Emitter<TodosState> emit) async {}
+  void _onDelTodo(TodoDeleted event, Emitter<TodosState> emit) async {
+    if (state is TodosLoadSuccess) {
+      final updateTodos = (state as TodosLoadSuccess)
+          .todos
+          .where((todo) => todo.content != event.todo.content)
+          .toList();
+      emit(TodosLoadSuccess(todos: updateTodos));
+      _deleteTodo(event.todo);
+    }
+  }
 
   /// 修改待办事项
-  void _onUpdateTodo(TodosEvent event, Emitter<TodosState> emit) async {}
+  void _onUpdateTodo(TodoUpdated event, Emitter<TodosState> emit) async {
+    if (state is TodosLoadSuccess) {
+      final List<TodoModel> updatedTodos =
+      (state as TodosLoadSuccess).todos.map((todo) {
+        return todo.content == event.todo.content ? event.todo : todo;
+      }).toList();
+      emit(TodosLoadSuccess(todos: updatedTodos));
+      TodoModel todo = event.todo;
+      todo.done = !todo.done!;
+      _saveTodo(event.todo);
+    }
+  }
 
   /// 将todo事项持久化
   Future _saveTodo(TodoModel todo) {
     return todosRepository.saveTodo(todo);
+  }
+
+  Future _deleteTodo(TodoModel todo) {
+    return todosRepository.deleteTodo(todo);
   }
 }

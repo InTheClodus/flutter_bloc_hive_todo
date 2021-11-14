@@ -1,6 +1,5 @@
 library todo_repository;
 
-export 'src/reactive_repository.dart';
 export 'src/todo_model.dart';
 // export 'src/todo_model.g.dart';
 export 'src/todo_repository.dart';
