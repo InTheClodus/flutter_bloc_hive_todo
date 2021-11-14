@@ -61,15 +61,16 @@ class TodosBloc extends Bloc<TodosEvent, TodosState> {
   }
 
   /// 修改待办事项
-  void _onUpdateTodo(TodoUpdated event, Emitter<TodosState> emit) async {
+  void _onUpdateTodo(TodoUpdated event, Emitter<TodosState> emit){
     if (state is TodosLoadSuccess) {
       final List<TodoModel> updatedTodos =
       (state as TodosLoadSuccess).todos.map((todo) {
-        return todo.content == event.todo.content ? event.todo : todo;
+        return todo.key == event.todo.key ? event.todo : todo;
       }).toList();
       emit(TodosLoadSuccess(todos: updatedTodos));
       TodoModel todo = event.todo;
       todo.done = !todo.done!;
+      print(todo.key);
       _saveTodo(event.todo);
     }
   }
