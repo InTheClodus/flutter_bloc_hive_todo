@@ -2,9 +2,6 @@ import 'package:dio/dio.dart';
 import 'package:networ_common/http/api_response.dart';
 import 'package:networ_common/http/app_exceptions.dart';
 import 'package:networ_common/http/http.dart';
-import 'package:networ_common/http/sp.dart';
-
-
 
 class TestApi {
   static const String _article = '/getAllAdvertise';

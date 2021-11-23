@@ -31,7 +31,7 @@ class TodoUpdated extends TodosEvent{
   List<Object> get props => [todo];
 
   @override
-  String toString() => 'TodoAdded { todo: $todo }';
+  String toString() => 'TodoUpdate { todo: $todo }';
 
 }
 

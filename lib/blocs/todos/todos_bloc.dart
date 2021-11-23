@@ -12,9 +12,7 @@ class TodosBloc extends Bloc<TodosEvent, TodosState> {
   final TodosRepositoryFlutter todosRepository;
 
   TodosBloc(this.todosRepository) : super(TodosLoadInProgress()) {
-    on<TodosEvent>((event, emit) {
-      // TODO: implement event handler
-    });
+    on<TodosEvent>((event, emit) {});
     on<TodosLoaded>(_onLoaded);
     on<TodoAdded>(_onAddTodo);
     on<TodoDeleted>(_onDelTodo);
@@ -61,25 +59,26 @@ class TodosBloc extends Bloc<TodosEvent, TodosState> {
   }
 
   /// 修改待办事项
-  void _onUpdateTodo(TodoUpdated event, Emitter<TodosState> emit){
+  void _onUpdateTodo(TodoUpdated event, Emitter<TodosState> emit) async {
+
     if (state is TodosLoadSuccess) {
-      final List<TodoModel> updatedTodos =
-      (state as TodosLoadSuccess).todos.map((todo) {
-        return todo.key == event.todo.key ? event.todo : todo;
-      }).toList();
+      TodoModel todoModel = event.todo;
+      todoModel.done = !todoModel.done!;
+      final updatedTodos = (state as TodosLoadSuccess)
+          .todos
+          .map((todo) => todo.key == todoModel.key ? todoModel : todo)
+          .toList();
       emit(TodosLoadSuccess(todos: updatedTodos));
-      TodoModel todo = event.todo;
-      todo.done = !todo.done!;
-      print(todo.key);
       _saveTodo(event.todo);
     }
   }
 
-  /// 将todo事项持久化
+  /// 将保存到网络和本地中
   Future _saveTodo(TodoModel todo) {
     return todosRepository.saveTodo(todo);
   }
 
+  /// 从网络和本地删除
   Future _deleteTodo(TodoModel todo) {
     return todosRepository.deleteTodo(todo);
   }

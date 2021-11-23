@@ -31,7 +31,7 @@ class _TodoHomeState extends State<TodoHome> {
         onPressed: () => showTodoEditorDialog(context),
         child: const Icon(MdiIcons.rocketLaunch),
       ),
-      body: BlocBuilder<TodosBloc, TodosState>(
+      body:  BlocBuilder<TodosBloc, TodosState>(
         builder: (context, state) {
           if (state is TodosLoadInProgress) {
             BotToast.showLoading();
@@ -52,12 +52,11 @@ class _TodoHomeState extends State<TodoHome> {
                   actions: [
                     IconButton(
                         onPressed: () async {
-                          //路由跳转  固定写法  PageA 为目标页面类名
                           Navigator.push(
                               context,
                               MaterialPageRoute<void>(
                                 builder: (BuildContext context) =>
-                                    const TestPage(),
+                                const TestPage(),
                               ));
                           // final aa =await TestApi.getScienceArticle();
                           // print("_-------->>>${aa.data!.map((e) => e.cover).toList()}");
@@ -74,7 +73,7 @@ class _TodoHomeState extends State<TodoHome> {
                           speed: const Duration(milliseconds: 50),
                           text: const ['待办'],
                           textStyle:
-                              GoogleFonts.ubuntu(fontWeight: FontWeight.bold),
+                          GoogleFonts.ubuntu(fontWeight: FontWeight.bold),
                           textAlign: TextAlign.center,
                         ),
                       ),
@@ -88,123 +87,123 @@ class _TodoHomeState extends State<TodoHome> {
                 ),
                 SliverList(
                     delegate: SliverChildListDelegate([
-                  const SizedBox(height: 10),
-                  ...state.todos.map(
-                    (todo) => InkWell(
-                      onTap: () {
-                        showTodoEditorDialog(context, todo: todo);
-                      },
-                      child: Slidable(
-                        key: const ValueKey(0),
-                        endActionPane: ActionPane(
-                          motion: const ScrollMotion(),
-                          children: [
-                            SlidableAction(
-                              flex: 2,
-                              onPressed: (BuildContext context) async {
-                                BlocProvider.of<TodosBloc>(context).add(
-                                  TodoDeleted(todo),
-                                );
-                              },
-                              backgroundColor: const Color(0xFFFE4A49),
-                              foregroundColor: Colors.white,
-                              icon: Icons.delete_forever_sharp,
-                              label: '删除',
-                            ),
-                            SlidableAction(
-                              flex: 2,
-                              onPressed: (BuildContext context) async {
-                                BlocProvider.of<TodosBloc>(context).add(
-                                  TodoUpdated(todo),
-                                );
-                              },
-                              backgroundColor: const Color(0xFF7BC043),
-                              foregroundColor: Colors.white,
-                              icon: Icons.radio_button_unchecked,
-                              label: '完成',
-                            ),
-                          ],
-                        ),
-                        child: Card(
-                          elevation: 0,
-                          child: SizedBox(
-                            height: 60,
-                            child: Row(
+                      const SizedBox(height: 10),
+                      ...state.todos.map(
+                            (todo) => InkWell(
+                          onTap: () {
+                            showTodoEditorDialog(context, todo: todo);
+                          },
+                          child: Slidable(
+                            key: const ValueKey(0),
+                            endActionPane: ActionPane(
+                              motion: const ScrollMotion(),
                               children: [
-                                Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 8.0),
-                                  child: todo.done!
-                                      ? Stack(
-                                          alignment: Alignment.center,
-                                          children: const [
-                                            Icon(
-                                              MdiIcons.check,
-                                              color: Colors.amberAccent,
-                                              size: 18,
-                                            ),
-                                            Icon(MdiIcons.circleOutline,
-                                                color: Colors.red),
-                                          ],
-                                        )
-                                      : const Icon(MdiIcons.circleOutline,
-                                          color: Colors.cyan),
+                                SlidableAction(
+                                  flex: 2,
+                                  onPressed: (BuildContext context) async {
+                                    BlocProvider.of<TodosBloc>(context).add(
+                                      TodoDeleted(todo),
+                                    );
+                                  },
+                                  backgroundColor: const Color(0xFFFE4A49),
+                                  foregroundColor: Colors.white,
+                                  icon: Icons.delete_forever_sharp,
+                                  label: '删除',
                                 ),
-                                const SizedBox(width: 10),
-                                Expanded(
-                                  child: Column(
-                                    mainAxisSize: MainAxisSize.min,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Opacity(
-                                        opacity: todo.done! ? 0.4 : 1,
-                                        child: Text(
-                                          todo.content ?? "空",
-                                          style: TextStyle(
-                                              fontSize: 17,
-                                              fontWeight: todo.done!
-                                                  ? FontWeight.w100
-                                                  : FontWeight.normal,
-                                              decoration: todo.done!
-                                                  ? TextDecoration.lineThrough
-                                                  : TextDecoration.none),
-                                        ),
-                                      ),
-                                      const SizedBox(height: 6),
-                                      Opacity(
-                                        opacity: 0.4,
-                                        child: Row(
-                                          children:  [
-                                            const Icon(
-                                              Icons.date_range,
-                                              size: 12,
-                                            ),
-                                            const SizedBox(width: 4),
-                                            Text(DateUtil.formatDate(todo.time!,format: "yyyy/MM/dd"),
-                                                style: const TextStyle(
-                                                  fontSize: 12,
-                                                ))
-                                          ],
-                                        ),
-                                      )
-                                    ],
-                                  ),
+                                SlidableAction(
+                                  flex: 2,
+                                  onPressed: (BuildContext context) async {
+                                    BlocProvider.of<TodosBloc>(context).add(
+                                      TodoUpdated(todo),
+                                    );
+                                  },
+                                  backgroundColor: const Color(0xFF7BC043),
+                                  foregroundColor: Colors.white,
+                                  icon: Icons.radio_button_unchecked,
+                                  label: '完成',
                                 ),
-                                Padding(
-                                  padding: const EdgeInsets.all(8.0) +
-                                      const EdgeInsets.symmetric(horizontal: 8),
-                                  child: const Icon(Icons.person,
-                                      color: Colors.red),
-                                )
                               ],
+                            ),
+                            child: Card(
+                              elevation: 0,
+                              child: SizedBox(
+                                height: 60,
+                                child: Row(
+                                  children: [
+                                    Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 8.0),
+                                      child: todo.done!
+                                          ? Stack(
+                                        alignment: Alignment.center,
+                                        children: const [
+                                          Icon(
+                                            MdiIcons.check,
+                                            color: Colors.amberAccent,
+                                            size: 18,
+                                          ),
+                                          Icon(MdiIcons.circleOutline,
+                                              color: Colors.red),
+                                        ],
+                                      )
+                                          : const Icon(MdiIcons.circleOutline,
+                                          color: Colors.cyan),
+                                    ),
+                                    const SizedBox(width: 10),
+                                    Expanded(
+                                      child: Column(
+                                        mainAxisSize: MainAxisSize.min,
+                                        crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                        children: [
+                                          Opacity(
+                                            opacity: todo.done! ? 0.4 : 1,
+                                            child: Text(
+                                              todo.content ?? "空",
+                                              style: TextStyle(
+                                                  fontSize: 17,
+                                                  fontWeight: todo.done!
+                                                      ? FontWeight.w100
+                                                      : FontWeight.normal,
+                                                  decoration: todo.done!
+                                                      ? TextDecoration.lineThrough
+                                                      : TextDecoration.none),
+                                            ),
+                                          ),
+                                          const SizedBox(height: 6),
+                                          Opacity(
+                                            opacity: 0.4,
+                                            child: Row(
+                                              children:  [
+                                                const Icon(
+                                                  Icons.date_range,
+                                                  size: 12,
+                                                ),
+                                                const SizedBox(width: 4),
+                                                Text(DateUtil.formatDate(todo.time!,format: "yyyy/MM/dd"),
+                                                    style: const TextStyle(
+                                                      fontSize: 12,
+                                                    ))
+                                              ],
+                                            ),
+                                          )
+                                        ],
+                                      ),
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.all(8.0) +
+                                          const EdgeInsets.symmetric(horizontal: 8),
+                                      child: const Icon(Icons.person,
+                                          color: Colors.red),
+                                    )
+                                  ],
+                                ),
+                              ),
                             ),
                           ),
                         ),
-                      ),
-                    ),
-                  )
-                ].toList()))
+                      )
+                    ].toList()))
               ],
             );
           }
